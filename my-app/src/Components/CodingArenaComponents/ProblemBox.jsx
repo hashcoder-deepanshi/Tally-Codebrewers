@@ -3,7 +3,7 @@ import { Box, Flex, Text, IconButton, VStack, HStack, Badge } from '@chakra-ui/r
 import { AiFillLike, AiFillDislike, AiFillStar } from 'react-icons/ai';
 import { TiStarOutline } from 'react-icons/ti';
 import {db} from './../../firebase/firebase'
-import { collection, query ,onSnapshot,arrayUnion,arrayRemove,doc,updateDoc} from "firebase/firestore";
+import { collection,onSnapshot,doc,updateDoc} from "firebase/firestore";
 import { useParams } from 'react-router-dom';
 
 const ProblemBox = () => {
@@ -11,6 +11,7 @@ const ProblemBox = () => {
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [starred, setStarred] = useState(false); // State for star button
+  const [examples, setExamples] = useState([]);
 
   const { id } = useParams();
   
@@ -18,9 +19,14 @@ const ProblemBox = () => {
     const docRef=doc(db,"Problems",id);
     onSnapshot(docRef,(snapshot)=>{
       setPrblms({...snapshot.data(),id:snapshot.id});
-      setLikes(data.likes || 0);
-      setDislikes(data.dislikes || 0);
     });
+
+    const examplesCollection = collection(docRef, 'Examples');
+    onSnapshot(examplesCollection, (snapshot) => {
+      const examplesData = snapshot.docs.map(doc => doc.data());
+      setExamples(examplesData);
+    });
+
     console.log(window.location.href)
   },[]);
   
@@ -44,22 +50,6 @@ const ProblemBox = () => {
     setDislikes(dislikes + 1);
   };
 
-  const problem = {
-    examples: [
-      {
-        id: 1,
-        inputText: "nums = [2,7,11,15], target = 9",
-        outputText: "[0,1]",
-        explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
-      },
-      {
-        id: 2,
-        inputText: "nums = [3,2,4], target = 6",
-        outputText: "[1,2]",
-        explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
-      },
-    ],
-  };
 
   return (
     <Box bg="gray.800" color="white" p={4} >
@@ -119,27 +109,29 @@ const ProblemBox = () => {
             <Box dangerouslySetInnerHTML={{ __html: prblms.desc }} />
           </Box>
 
-          {/* Examples */}
-          <VStack align="start" spacing={4} mt={4}>
-            {problem.examples.map((example, index) => (
-              <Box key={example.id}>
-                <Text fontWeight="medium" color="white">Example {index + 1}:</Text>
-                <Box p={4} bg="gray.700" borderRadius="md" mt={3}>
-                  <pre>
-                    <strong>Input:</strong> {example.inputText}
-                    <br />
-                    <strong>Output:</strong> {example.outputText}
-                    {example.explanation && (
-                      <>
-                        <br />
-                        <strong>Explanation:</strong> {example.explanation}
-                      </>
-                    )}
-                  </pre>
+            {/* Examples */}
+            <VStack align="start" spacing={4} mt={4}>
+              {examples.map((example, index) => (
+                <Box key={index}>
+                  <Text fontWeight="medium" color="white">Example {index + 1}:</Text>
+                  <Box p={4} bg="gray.700" borderRadius="md" mt={3}>
+                    <pre>
+                      <strong>Input:</strong> {example.input}
+                      <br />
+                      <strong>Output:</strong> {example.output}
+                      {example.explanation && (
+                        <>
+                          <br />
+                          <strong>Explanation:</strong> {example.explanation}
+                        </>
+                      )}
+                    </pre>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
-          </VStack>
+              ))}
+            </VStack>
+
+
 
           {/* Constraints */}
           <Box my={8} pb={4}>
@@ -156,5 +148,4 @@ const ProblemBox = () => {
 };
 
 export default ProblemBox;
-
 

@@ -22,7 +22,7 @@ const CodingPlayground = () => {
     };
 
     return (
-        <Box>
+        <Box  boxShadow="lg">
             <HStack spacing={4}>
                 <Box w="50%">
                     <LanguageSelector language={language} onSelect={onSelect} />

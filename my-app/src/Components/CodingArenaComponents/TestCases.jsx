@@ -70,20 +70,15 @@ const TestCases = ({ editorRef, language }) => {
   };
 
   const handleAddCustomTestCase = () => {
-    if (customInput.trim() && customOutput.trim()) {
-      const newTestCase = {
-        id: examples.length + 1,
-        inputText: customInput,
-        outputText: customOutput,
-      };
-      setExamples([...examples, newTestCase]);
-      setCustomInput('');
-      setCustomOutput('');
-      setActiveTestCaseId(examples.length);
-      console.log('Added custom test case:', newTestCase); // Debugging line
-    } else {
-      console.log('Custom input or output is empty'); // Debugging line
-    }
+    const newTestCase = {
+      id: examples.length + 1,
+      inputText: customInput,
+      outputText: customOutput,
+    };
+    setExamples([...examples, newTestCase]);
+    setCustomInput('');  // Clear input fields
+    setCustomOutput('');
+    setActiveTestCaseId(examples.length);  // Set the new test case as active
   };
 
   const handleRemoveTestCase = (id) => {
@@ -157,7 +152,7 @@ const TestCases = ({ editorRef, language }) => {
             size="lg"
             colorScheme="gray.800"
             onClick={handleAddCustomTestCase} // Correct function reference
-          />
+          />   
         </Flex>
       </Flex>
 
