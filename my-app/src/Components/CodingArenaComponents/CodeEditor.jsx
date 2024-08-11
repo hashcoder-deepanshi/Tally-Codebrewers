@@ -32,7 +32,7 @@ const CodeEditor = () => {
                     value={value}
                     onChange={(value) => setValue(value)}
                 />
-                <TestCases/>
+                <TestCases editorRef={editorRef} language={language}/>
         </Box>
     )
 }

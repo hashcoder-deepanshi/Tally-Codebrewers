@@ -6,7 +6,7 @@ const Navbar = () => {
     <Box bg="gray.800" color="white" px={4} py={2}>
       <Flex align="center" justify="space-between">
         <Text fontSize="lg" fontWeight="bold">
-          MyApp
+          Code It Here
         </Text>
         <HStack
           spacing={6}
@@ -18,9 +18,6 @@ const Navbar = () => {
           </Link>
           <Link href="/arena" fontSize="md" _hover={{ textDecoration: 'underline' }}>
             Arena
-          </Link>
-          <Link href="/battleground" fontSize="md" _hover={{ textDecoration: 'underline' }}>
-            Battleground
           </Link>
           <Link href="/contribute" fontSize="md" _hover={{ textDecoration: 'underline' }}>
             Contribute

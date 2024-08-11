@@ -8,16 +8,41 @@ import { useParams } from 'react-router-dom';
 
 const ProblemBox = () => {
   const [prblms, setPrblms] = useState([]);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+  const [starred, setStarred] = useState(false); // State for star button
+
   const { id } = useParams();
   
   useEffect(()=>{
     const docRef=doc(db,"Problems",id);
     onSnapshot(docRef,(snapshot)=>{
       setPrblms({...snapshot.data(),id:snapshot.id});
+      setLikes(data.likes || 0);
+      setDislikes(data.dislikes || 0);
     });
     console.log(window.location.href)
   },[]);
+  
+  const handleLike = async () => {
+    const docRef = doc(db, "Problems", id);
+    await updateDoc(docRef, {
+      likes: likes + 1
+    });
+    setLikes(likes + 1);
+  };
 
+  const handleStar = () => {
+    setStarred(prevStarred => !prevStarred); // Toggle star state
+  };
+
+  const handleDislike = async () => {
+    const docRef = doc(db, "Problems", id);
+    await updateDoc(docRef, {
+      dislikes: dislikes + 1
+    });
+    setDislikes(dislikes + 1);
+  };
 
   const problem = {
     examples: [
@@ -37,7 +62,7 @@ const ProblemBox = () => {
   };
 
   return (
-    <Box bg="gray.800" color="white" p={4} borderRadius="md">
+    <Box bg="gray.800" color="white" p={4} >
     {/* TAB */}
     <Flex h="44px" w="100%" alignItems="center" pt={2} bg="gray.700" color="white" overflowX="hidden" overflowY="hidden">
       <Box bg="gray.800" borderRadius="md" px={5} py={2} textAlign="center" cursor="pointer" key={id}>
@@ -45,7 +70,7 @@ const ProblemBox = () => {
       </Box>
     </Flex>
 
-    <Flex px={0} py={4} h="calc(100vh - 94px)" overflowY="auto">
+    <Flex px={0} py={4} h="calc(120vh - 94px)" overflowY="auto">
       <VStack align="start" spacing={4} px={5}>
         {/* Problem heading */}
         <Box w="100%">
@@ -68,20 +93,24 @@ const ProblemBox = () => {
               icon={<AiFillLike />}
               variant="outlined"
               size="lg"
+              onClick={handleLike}
             />
-            <Text fontSize="sm">123</Text>
+            <Text fontSize="sm">{prblms.likes}</Text>
             <IconButton
               aria-label="Dislike"
               icon={<AiFillDislike />}
               variant="outlined"
               size="lg"
+              onClick={handleDislike}
             />
-            <Text fontSize="sm">10</Text>
+            <Text fontSize="sm">{prblms.dislikes}</Text>
             <IconButton
               aria-label="Star"
-              icon={<TiStarOutline />}
+              icon={starred ? <AiFillStar /> : <TiStarOutline />}
+              color={starred ? "yellow.400" : "gray.500"}
               variant='outlined'
               size="lg"
+              onClick={handleStar}
             />
           </HStack>
 

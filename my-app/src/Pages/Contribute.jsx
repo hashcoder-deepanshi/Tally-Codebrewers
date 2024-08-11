@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -10,8 +10,9 @@ import {
   HStack,
   Heading,
   Select,
+  useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { db } from '../firebase/firebase';
 
 const Contribute = () => {
   const [title, setTitle] = useState("");
@@ -19,15 +20,50 @@ const Contribute = () => {
   const [description, setDescription] = useState("");
   const [constraints, setConstraints] = useState("");
   const [examples, setExamples] = useState("");
+  const toast = useToast();
 
-  const handleSubmit = () => {
-    console.log({
-      title,
-      topic,
-      description,
-      constraints,
-      examples,
-    });
+  const handleSubmit = async () => {
+    if (!title || !topic || !description || !constraints || !examples) {
+      toast({
+        title: "Form Incomplete",
+        description: "Please fill in all fields.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      await db.collection("Problems").add({
+        title,
+        topic,
+        description,
+        constraints,
+        examples,
+        createdAt: new Date(),
+      });
+      toast({
+        title: "Problem Added",
+        description: "Your problem has been added successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      setTitle("");
+      setTopic("");
+      setDescription("");
+      setConstraints("");
+      setExamples("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
